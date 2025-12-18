@@ -1,47 +1,36 @@
 namespace GeneticGame;
+using GeneticGame.FieldEntities;
 
 public class BoardUi
 {
+    private readonly Engine _engine;
+    public BoardUi(Engine engine)
+    {
+        _engine = engine;
+    }
+
     public void StartGame()
     {
-        char[,] field = CreateField();
-        ShowField(field);
-    }
-    private const int _fieldSize = 25;
-    public void ShowField(char[,] field)
-    {
-        for (int i = 0; i < _fieldSize; i++)
+        _engine.CreateField();
+        for (int i = 0; i <= 5; i++)
         {
-            for (int j = 0; j < _fieldSize; j++)
+            ShowField(_engine.GetGameField());
+            _engine.GenerateFood(1);
+            Thread.Sleep(1000);
+            Console.Clear();
+        }
+    }
+    public void ShowField(Field field)
+    {
+        for (int i = 0; i < field.Size; i++)
+        {
+            for (int j = 0; j < field.Size; j++)
             {
-                Console.Write(field[i, j] + " ");
+                if(field.FieldCells[i,j].FieldType == TypeOfFields.Food) Console.Write("F");
+                if(field.FieldCells[i,j].FieldType == TypeOfFields.Wall) Console.Write("#");
+                if(field.FieldCells[i,j].FieldType == TypeOfFields.Empty) Console.Write(" ");
             }
             Console.Write("\n");
         }
-    }
-
-    public char[,] CreateField()
-    {
-        char[,] field = new char[_fieldSize,_fieldSize];
-        for (int i = 0; i < _fieldSize; i++)
-        {
-            for (int j = 0; j < _fieldSize; j++)
-            {
-                if(i == 0)
-                    field[i, j] = '#';
-                else if(i == _fieldSize - 1)
-                    field[i, j] = '#';
-                
-                else if(j == 0)
-                    field[i, j] = '#';
-                else if(j == _fieldSize-1)
-                    field[i, j] = '#';
-
-                
-                else field[i, j] = ' ';
-            }
-        }
-
-        return field;
     }
 }
