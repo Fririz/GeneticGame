@@ -4,6 +4,25 @@ namespace GeneticGame;
 public class Engine
 {
     Field _gameField  = new(GameSettings.GameFieldSize);
+    Unit[] _gameUnits = new Unit[GameSettings.InitialAmountOfUnit];
+
+    public void StartGame()
+    {
+        
+    }
+    public void UpdateGame()
+    {
+        
+    }
+
+    public void InitializeUnits()
+    {
+        for (int i = 0; i < GameSettings.InitialAmountOfUnit; i++)
+        {
+            _gameUnits[i] = new Unit();
+        }
+    }
+    
     public void CreateField()
     {
         for (int i = 0; i < _gameField.Size; i++)

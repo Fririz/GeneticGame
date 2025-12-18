@@ -1,22 +1,34 @@
 namespace GeneticGame;
 
+public record UnitGenetics(
+    double BirthModifier, 
+    double EatModifier, 
+    double FightModifier, 
+    double BaseDamage, 
+    double ArmorPercent
+);
+
 public class Unit
 {
-    public Coordinates Coordinates { get; set; }
+    public string Name { get; init; }
+    public Coordinates Coordinates { get; set; } 
+    public UnitGenetics Genes { get; init; } 
     
-    public double BirthModifier { get; init; }
-    public double EatModifier { get; init; }
-    public double FightModifier { get; init; }
     public double Energy { get; private set; }
-    
     public double Health { get; private set; }
-    public double Damage { get; init; }
-    public double Armor { get; init; } //in percent
 
+    // Конструктор стал чистым
+    public Unit(string name, Coordinates coords, UnitGenetics genes, double startHealth, double startEnergy)
+    {
+        Name = name;
+        Coordinates = coords;
+        Genes = genes;
+        Health = startHealth;
+        Energy = startEnergy;
+    }
     public void GetDamage(int damage)
     {
-        Health -= (damage * Armor) / 100; // formula
+        Health -= (damage * Genes.ArmorPercent) / 100; // formula
     }
-    
     
 }
