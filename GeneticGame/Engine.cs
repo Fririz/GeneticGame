@@ -17,30 +17,39 @@ public class Engine
 
     public void InitializeUnits()
     {
+        UnitGenetics geneticsOfUnit = GameSettings.StandartGenetic;
         for (int i = 0; i < GameSettings.InitialAmountOfUnit; i++)
         {
-            _gameUnits[i] = new Unit();
-        }
+            UnitGenetics unitGenetics = GetRandomizeUnitStartGenetics();
+            FieldCell[] emptyFieldCells = GetEmptyFieldCells();
+            FieldCell randomEmptyCell = emptyFieldCells[Random.Shared.Next(0, emptyFieldCells.Length)];
+            var unit = new Unit(Convert.ToString(i), randomEmptyCell.Coordinates, unitGenetics);
+            _gameUnits[i] = unit;
+            randomEmptyCell.CurrentUnit = unit;
+            randomEmptyCell.FieldType = TypeOfFields.Unit;
+            
+        } 
+    }
+
+    private UnitGenetics GetRandomizeUnitStartGenetics()
+    {
+        return GameSettings.StandartGenetic.GetInitializedRandomGenetics();
     }
     
     public void CreateField()
     {
-        for (int i = 0; i < _gameField.Size; i++)
+        int size = _gameField.Size;
+        for (int i = 0; i < size; i++)
         {
-            for (int j = 0; j < _gameField.Size; j++)
+            for (int j = 0; j < size; j++)
             {
-                if(i == 0)
-                    _gameField.FieldCells[i, j] = FieldCell.CreateWallCell(new Coordinates(i,j));
-                else if(i == _gameField.Size - 1)
-                    _gameField.FieldCells[i, j] = FieldCell.CreateWallCell(new Coordinates(i,j));
+                bool isBorder = i == 0 || i == size - 1 || j == 0 || j == size - 1;
+
+                var coords = new Coordinates(i, j);
                 
-                else if (j == 0)
-                    _gameField.FieldCells[i, j] = FieldCell.CreateWallCell(new Coordinates(i, j));
-                else if (j == _gameField.Size - 1)
-                    _gameField.FieldCells[i, j] = FieldCell.CreateWallCell(new Coordinates(i, j));
-
-
-                else _gameField.FieldCells[i, j] = FieldCell.CreateEmptyCell(new Coordinates(i, j));
+                _gameField.FieldCells[i, j] = isBorder 
+                    ? FieldCell.CreateWallCell(coords) 
+                    : FieldCell.CreateEmptyCell(coords);
             }
         }
     }
@@ -49,24 +58,25 @@ public class Engine
     {
         return _gameField;
     }
+
+    public FieldCell[] GetEmptyFieldCells()
+    {
+        return _gameField.FieldCells.Cast<FieldCell>().Where(cell => cell.FieldType == TypeOfFields.Empty).ToArray();
+    }
     public void GenerateFood()
     {
         int spawnedCount = 0;
         int safetyCounter = 0; // If field is full, we can't spawn food'
-
-        while (spawnedCount < GameSettings.AmmountOfFoodPlaces && safetyCounter < 100)
-        {
-            int x = Random.Shared.Next(0, _gameField.Size);
-            int y = Random.Shared.Next(0, _gameField.Size);
-
-            if (_gameField.FieldCells[x, y].FieldType == TypeOfFields.Empty)
-            {
-
-                _gameField.FieldCells[x, y] = FieldCell.CreateFoodCell(new Coordinates(x, y), GameSettings.AmmountOfFood);
-                spawnedCount++;
-            }
+        var emptyFieldCells = GetEmptyFieldCells();
         
+        while (spawnedCount < GameSettings.AmountOfFoodPlaces && safetyCounter < 100)
+        {
+            FieldCell randomEmptyCell = emptyFieldCells[Random.Shared.Next(0, emptyFieldCells.Length)];
+            _gameField.FieldCells[randomEmptyCell.Coordinates.X, randomEmptyCell.Coordinates.Y] = 
+                FieldCell.CreateFoodCell(randomEmptyCell.Coordinates, GameSettings.AmountOfFood);
+            spawnedCount++;
             safetyCounter++;
+
         }
     }
 }

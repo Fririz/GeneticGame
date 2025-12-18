@@ -1,34 +1,52 @@
 namespace GeneticGame;
 
-public record UnitGenetics(
-    double BirthModifier, 
-    double EatModifier, 
-    double FightModifier, 
-    double BaseDamage, 
-    double ArmorPercent
-);
+public record struct UnitGenetics(
+    double BirthModifier,
+    double EatModifier,
+    double FightModifier,
+    double BaseDamage,
+    double ArmorPercent,
+    double MaxHealth,
+    double MaxEnergy
+)
+{
+    public UnitGenetics GetInitializedRandomGenetics()
+    {
+        double Rnd() => GameSettings.GetPercentOfInitGeneticsRandomization();
+
+        return new UnitGenetics
+        {
+            BirthModifier = this.BirthModifier * Rnd(),
+            EatModifier   = this.EatModifier * Rnd(),
+            FightModifier = this.FightModifier * Rnd(),
+            BaseDamage    = this.BaseDamage * Rnd(),
+            ArmorPercent  = this.ArmorPercent * Rnd(),
+            MaxHealth     = this.MaxHealth * Rnd(),
+            MaxEnergy     = this.MaxEnergy * Rnd()
+        };
+    }
+}
 
 public class Unit
 {
     public string Name { get; init; }
     public Coordinates Coordinates { get; set; } 
     public UnitGenetics Genes { get; init; } 
-    
-    public double Energy { get; private set; }
-    public double Health { get; private set; }
+    public double CurrentHealth { get; private set; }
+    public double CurrentEnergy { get; private set; }
 
-    // Конструктор стал чистым
-    public Unit(string name, Coordinates coords, UnitGenetics genes, double startHealth, double startEnergy)
+
+    public Unit(string name, Coordinates coords, UnitGenetics genes)
     {
         Name = name;
         Coordinates = coords;
         Genes = genes;
-        Health = startHealth;
-        Energy = startEnergy;
+        CurrentHealth = genes.MaxHealth;
+        CurrentEnergy = genes.MaxEnergy;
     }
     public void GetDamage(int damage)
     {
-        Health -= (damage * Genes.ArmorPercent) / 100; // formula
+        CurrentHealth -= damage * Genes.ArmorPercent; // formula
     }
     
 }

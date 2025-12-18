@@ -14,10 +14,12 @@ public class BoardUi
         _engine.CreateField();
         for (int i = 0; i < 5; i++)
         {
+            Console.Clear();
             ShowField(_engine.GetGameField());
+            _engine.InitializeUnits();
             _engine.GenerateFood();
             Thread.Sleep(1000);
-            Console.Clear();
+
         }
         ShowField(_engine.GetGameField());
         var field = _engine.GetGameField();
@@ -35,6 +37,7 @@ public class BoardUi
                 if(field.FieldCells[i,j].FieldType == TypeOfFields.Food) Console.Write("F");
                 if(field.FieldCells[i,j].FieldType == TypeOfFields.Wall) Console.Write("#");
                 if(field.FieldCells[i,j].FieldType == TypeOfFields.Empty) Console.Write(" ");
+                if(field.FieldCells[i,j].FieldType == TypeOfFields.Unit) Console.Write(field.FieldCells[i,j].CurrentUnit!.Name);
                 Console.Write(" ");
             }
             Console.Write("\n");
