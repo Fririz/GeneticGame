@@ -3,9 +3,7 @@ namespace GeneticGame;
 
 public class Engine
 {
-    private const int FoodSpawnChancePercent = 10;
-    private const int StartAmmountOfUnits = 5;
-    Field _gameField  = new(50);
+    Field _gameField  = new(GameSettings.GameFieldSize);
     public void CreateField()
     {
         for (int i = 0; i < _gameField.Size; i++)
@@ -32,23 +30,21 @@ public class Engine
     {
         return _gameField;
     }
-    public void GenerateFood(int amountToSpawn = 1)
+    public void GenerateFood()
     {
         int spawnedCount = 0;
         int safetyCounter = 0; // If field is full, we can't spawn food'
 
-        while (spawnedCount < amountToSpawn && safetyCounter < 100)
+        while (spawnedCount < GameSettings.AmmountOfFoodPlaces && safetyCounter < 100)
         {
             int x = Random.Shared.Next(0, _gameField.Size);
             int y = Random.Shared.Next(0, _gameField.Size);
 
             if (_gameField.FieldCells[x, y].FieldType == TypeOfFields.Empty)
             {
-                if (Random.Shared.NextDouble() < FoodSpawnChancePercent / 100.0)
-                {
-                    _gameField.FieldCells[x, y] = FieldCell.CreateFoodCell(new Coordinates(x, y), 20);
-                    spawnedCount++;
-                }
+
+                _gameField.FieldCells[x, y] = FieldCell.CreateFoodCell(new Coordinates(x, y), GameSettings.AmmountOfFood);
+                spawnedCount++;
             }
         
             safetyCounter++;
