@@ -18,16 +18,27 @@ public class Engine
     public void InitializeUnits()
     {
         UnitGenetics geneticsOfUnit = GameSettings.StandartGenetic;
+        var emptyCells = _gameField.GetEmptyFieldCells().ToList();
         for (int i = 0; i < GameSettings.InitialAmountOfUnit; i++)
         {
+            if (emptyCells.Count == 0) break; 
+
             UnitGenetics unitGenetics = GetRandomizeUnitStartGenetics();
-            FieldCell[] emptyFieldCells = GetEmptyFieldCells();
-            FieldCell randomEmptyCell = emptyFieldCells[Random.Shared.Next(0, emptyFieldCells.Length)];
-            var unit = new Unit(Convert.ToString(i), randomEmptyCell.Coordinates, unitGenetics);
-            _gameUnits[i] = unit;
-            randomEmptyCell.CurrentUnit = unit;
-            randomEmptyCell.FieldType = TypeOfFields.Unit;
+
+
+            int index = Random.Shared.Next(emptyCells.Count);
+            FieldCell targetCell = emptyCells[index];
+
+
+            var newUnit = new Unit(Convert.ToString(i), targetCell.Coordinates, unitGenetics);
+
+
+            targetCell.CurrentUnit = newUnit;
+            targetCell.FieldType = TypeOfFields.Unit;
             
+            _gameUnits[i] = newUnit;
+            
+            emptyCells.RemoveAt(index);
         } 
     }
 
@@ -59,15 +70,12 @@ public class Engine
         return _gameField;
     }
 
-    public FieldCell[] GetEmptyFieldCells()
-    {
-        return _gameField.FieldCells.Cast<FieldCell>().Where(cell => cell.FieldType == TypeOfFields.Empty).ToArray();
-    }
+
     public void GenerateFood()
     {
         int spawnedCount = 0;
         int safetyCounter = 0; // If field is full, we can't spawn food'
-        var emptyFieldCells = GetEmptyFieldCells();
+        var emptyFieldCells = _gameField.GetEmptyFieldCells();
         
         while (spawnedCount < GameSettings.AmountOfFoodPlaces && safetyCounter < 100)
         {

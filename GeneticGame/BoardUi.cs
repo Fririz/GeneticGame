@@ -12,11 +12,12 @@ public class BoardUi
     public void StartGame()
     {
         _engine.CreateField();
+        _engine.InitializeUnits();
         for (int i = 0; i < 5; i++)
         {
             Console.Clear();
             ShowField(_engine.GetGameField());
-            _engine.InitializeUnits();
+
             _engine.GenerateFood();
             Thread.Sleep(1000);
 

@@ -1,3 +1,5 @@
+using GeneticGame.FieldEntities;
+
 namespace GeneticGame;
 
 public record struct UnitGenetics(
@@ -48,5 +50,10 @@ public class Unit
     {
         CurrentHealth -= damage * Genes.ArmorPercent; // formula
     }
+
+    // public Coordinates DecideNextMove(Field field)
+    // {
+    //     
+    // }
     
 }
