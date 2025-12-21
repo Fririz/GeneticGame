@@ -7,11 +7,17 @@ public class Field
         Size = size;
         FieldCells = new FieldCell[size, size];
     }
-    public FieldCell[] GetEmptyFieldCells()
+    public FieldCell[] GetAllCellsWithType(TypeOfFields type)
     {
-        return FieldCells.Cast<FieldCell>().Where(cell => cell.FieldType == TypeOfFields.Empty).ToArray();
+        return FieldCells.Cast<FieldCell>().Where(cell => cell.FieldType == type).ToArray();
     }
-    public int Size {get; set;}
+
+    public FieldCell[] GetAllCellsWithType(TypeOfFields[] types)
+    {
+        return FieldCells.Cast<FieldCell>().Where(cell => types.Contains(cell.FieldType)).ToArray();
+    }
+    
+    public int Size {get; init;}
     public FieldCell[,] FieldCells {get; set;}
 
 

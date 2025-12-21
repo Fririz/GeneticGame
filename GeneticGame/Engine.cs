@@ -17,13 +17,12 @@ public class Engine
 
     public void InitializeUnits()
     {
-        UnitGenetics geneticsOfUnit = GameSettings.StandartGenetic;
-        var emptyCells = _gameField.GetEmptyFieldCells().ToList();
+        var emptyCells = _gameField.GetAllCellsWithType(TypeOfFields.Empty).ToList();
         for (int i = 0; i < GameSettings.InitialAmountOfUnit; i++)
         {
             if (emptyCells.Count == 0) break; 
 
-            UnitGenetics unitGenetics = GetRandomizeUnitStartGenetics();
+            UnitGenetics unitGenetics = GameSettings.StandartGenetic.GetInitializedRandomGenetics();
 
 
             int index = Random.Shared.Next(emptyCells.Count);
@@ -40,11 +39,6 @@ public class Engine
             
             emptyCells.RemoveAt(index);
         } 
-    }
-
-    private UnitGenetics GetRandomizeUnitStartGenetics()
-    {
-        return GameSettings.StandartGenetic.GetInitializedRandomGenetics();
     }
     
     public void CreateField()
@@ -75,7 +69,7 @@ public class Engine
     {
         int spawnedCount = 0;
         int safetyCounter = 0; // If field is full, we can't spawn food'
-        var emptyFieldCells = _gameField.GetEmptyFieldCells();
+        var emptyFieldCells = _gameField.GetAllCellsWithType(TypeOfFields.Empty);
         
         while (spawnedCount < GameSettings.AmountOfFoodPlaces && safetyCounter < 100)
         {

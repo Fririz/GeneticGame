@@ -1,32 +1,33 @@
 using GeneticGame.FieldEntities;
 namespace GeneticGame;
 
-
 public static class PathFinder
 {
-    public static (Coordinates? Target, double Distance) FindClosestFood(Coordinates unitPos, Field field)
+    public static Dictionary<T, (int Distance, FieldCell Cell)> FindNearest<T>(
+        Coordinates startPos, 
+        Field field, 
+        Func<FieldCell, T?> selector) where T : notnull
     {
-        Coordinates? bestTarget = null;
-        double minDistance = double.MaxValue;
-        for (int x = 0; x < field.Size; x++)
-        {
-            for (int y = 0; y < field.Size; y++)
-            {
-                var cell = field.FieldCells[x, y];
-                if (cell.FieldType == FieldEntities.TypeOfFields.Food)
-                {
-                    // Manhettan distacne: |x1 - x2| + |y1 - y2|
-                    double distance = Math.Abs(unitPos.X - x) + Math.Abs(unitPos.Y - y);
+        var result = new Dictionary<T, (int Distance, FieldCell Cell)>();
 
-                    if (distance < minDistance)
-                    {
-                        minDistance = distance;
-                        bestTarget = new Coordinates(x, y);
-                    }
-                }
+        foreach (var cell in field.FieldCells)
+        {
+
+            if (cell.Coordinates.X == startPos.X && cell.Coordinates.Y == startPos.Y)
+                continue;
+
+            T? typeKey = selector(cell);
+
+            if (typeKey == null) continue;
+
+            int distance = Math.Abs(startPos.X - cell.Coordinates.X) + Math.Abs(startPos.Y - cell.Coordinates.Y);
+
+            if (!result.ContainsKey(typeKey) || distance < result[typeKey].Distance)
+            {
+                result[typeKey] = (distance, cell);
             }
         }
 
-        return (bestTarget, minDistance);
+        return result;
     }
 }
