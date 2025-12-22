@@ -8,12 +8,11 @@ public class Engine
 
     public void StartGame()
     {
-        
+        CreateField();
+        InitializeUnits();
+        GenerateFood();
     }
-    public void UpdateGame()
-    {
-        
-    }
+
 
     public void InitializeUnits()
     {

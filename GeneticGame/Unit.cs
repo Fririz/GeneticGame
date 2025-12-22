@@ -57,15 +57,17 @@ public class Unit
     {
         Food,
         Mate,   
-        Enemy
+        Enemy,
+        Empty
     }
 
     public Coordinates DecideNextMove(Field field)
-    {
+    {       
+            
         var targets = PathFinder.FindNearest<TargetCategory>(
             this.Coordinates,
             field,
-            (cell) => IdentifyTarget(cell)
+            cell => IdentifyTarget(cell)
         );
 
         FieldCell? bestTargetCell = null;
@@ -104,10 +106,11 @@ public class Unit
             case TargetCategory.Food: return Genes.EatModifier;
             case TargetCategory.Mate: return Genes.BirthModifier;
             case TargetCategory.Enemy: return Genes.FightModifier;
+            case TargetCategory.Empty: return Genes.FightModifier;
             default: return 0;
         }
     }
-    private TargetCategory? IdentifyTarget(FieldCell cell)
+    private TargetCategory IdentifyTarget(FieldCell cell)
     {
         switch (cell.FieldType)
         {
@@ -116,13 +119,13 @@ public class Unit
             
             case TypeOfFields.Unit:
                 var otherUnit = cell.CurrentUnit;
-                if (otherUnit == null) return null; 
+                if (otherUnit == null) return TargetCategory.Empty; 
 
                 return (this.Gender != otherUnit.Gender)
                     ? TargetCategory.Mate
                     : TargetCategory.Enemy;
             default: 
-                return null; 
+                return TargetCategory.Empty; 
         }
     }
 
@@ -130,8 +133,7 @@ public class Unit
     {
         int dx = Math.Sign(target.X - Coordinates.X);
         int dy = Math.Sign(target.Y - Coordinates.Y);
-
-
+        
         if (Math.Abs(target.X - Coordinates.X) >= Math.Abs(target.Y - Coordinates.Y))
         {
             return new Coordinates(Coordinates.X + dx, Coordinates.Y);
