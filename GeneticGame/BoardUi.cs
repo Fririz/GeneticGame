@@ -11,25 +11,18 @@ public class BoardUi
 
     public void StartGame()
     {
-        _engine.CreateField();
-        _engine.InitializeUnits();
-        for (int i = 0; i < 5; i++)
-        {
-            Console.Clear();
-            ShowField(_engine.GetGameField());
-
-            _engine.GenerateFood();
-            Thread.Sleep(1000);
-
-        }
+        _engine.StartGame();
         ShowField(_engine.GetGameField());
-        var field = _engine.GetGameField();
-        int foodCount = field.FieldCells
-            .Cast<FieldCell>() 
-            .Count(cell => cell.FieldType == TypeOfFields.Food);
-        Console.WriteLine($"Food count: {foodCount}");
+        Thread.Sleep(1000);
+        while (true)
+        {
+            _engine.UpdateGame();
+            ShowField(_engine.GetGameField());
+            Thread.Sleep(1000);
+            Console.Clear();
+        }
     }
-    public void ShowField(Field field)
+    private void ShowField(Field field)
     {
         for (int i = 0; i < field.Size; i++)
         {

@@ -82,7 +82,7 @@ public class Unit
 
             double modifier = GetModifierForCategory(category);
 
-            double currentScore = modifier * safeDist;
+            double currentScore = modifier / safeDist;
 
             if (currentScore > bestScore)
             {
@@ -106,7 +106,6 @@ public class Unit
             case TargetCategory.Food: return Genes.EatModifier;
             case TargetCategory.Mate: return Genes.BirthModifier;
             case TargetCategory.Enemy: return Genes.FightModifier;
-            case TargetCategory.Empty: return Genes.FightModifier;
             default: return 0;
         }
     }
