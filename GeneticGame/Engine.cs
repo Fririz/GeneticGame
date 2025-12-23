@@ -33,7 +33,19 @@
             }
         }
 
-        public void InitializeUnits()
+        private FieldCell[] GetCellsThatCanInteractWithUnit(Unit unit)
+        {
+            var unitCoordinates = unit.Coordinates;
+            List<Coordinates> possibleCoordinates = new List<Coordinates>();
+            possibleCoordinates.Add(unitCoordinates with { X = unitCoordinates.X + 1 });
+            possibleCoordinates.Add(unitCoordinates with { X = unitCoordinates.X - 1 });
+            possibleCoordinates.Add(unitCoordinates with { Y = unitCoordinates.Y + 1 });
+            possibleCoordinates.Add(unitCoordinates with { Y = unitCoordinates.Y - 1 });
+            var possibleCells = possibleCoordinates.Select(coords => _gameField.FieldCells[coords.X, coords.Y]).ToArray();
+            return possibleCells.Where(cell => cell.FieldType is TypeOfFields.Unit or TypeOfFields.Food).ToArray();
+        }
+
+        private void InitializeUnits()
         {
             var emptyCells = _gameField.GetAllCellsWithType(TypeOfFields.Empty).ToList();
             for (int i = 0; i < GameSettings.InitialAmountOfUnit; i++)
