@@ -2,33 +2,6 @@ using GeneticGame.FieldEntities;
 
 namespace GeneticGame;
 
-public record struct UnitGenetics(
-    double BirthModifier,
-    double EatModifier,
-    double FightModifier,
-    double BaseDamage,
-    double ArmorPercent,
-    double MaxHealth,
-    double MaxEnergy
-)
-{
-    public UnitGenetics GetInitializedRandomGenetics()
-    {
-        double Rnd() => GameSettings.GetPercentOfInitGeneticsRandomization();
-
-        return new UnitGenetics
-        {
-            BirthModifier = this.BirthModifier * Rnd(),
-            EatModifier   = this.EatModifier * Rnd(),
-            FightModifier = this.FightModifier * Rnd(),
-            BaseDamage    = this.BaseDamage * Rnd(),
-            ArmorPercent  = this.ArmorPercent * Rnd(),
-            MaxHealth     = this.MaxHealth * Rnd(),
-            MaxEnergy     = this.MaxEnergy * Rnd()
-        };
-    }
-}
-
 public class Unit
 {
     public int Gender { get; init; } // 0 - male, 1 - female
@@ -36,8 +9,20 @@ public class Unit
     public Coordinates Coordinates { get; set; } 
     public UnitGenetics Genes { get; init; } 
     public double CurrentHealth { get; private set; }
-    public double CurrentEnergy { get; private set; }
+    public double CurrentEnergy { get; set; }
+    public bool IsDead => CurrentHealth <= 0;
 
+    private int _birthCooldown = 5;
+    
+    public int BirthCooldown
+    {
+        get => _birthCooldown;
+        set
+        {
+            if (value < 0) _birthCooldown = 0;
+            else _birthCooldown = value;
+        }
+    }
 
     public Unit(string name, Coordinates coords, UnitGenetics genes)
     {
@@ -48,11 +33,15 @@ public class Unit
         CurrentEnergy = genes.MaxEnergy;
         Gender = Random.Shared.Next(0, 2);
     }
-    public void GetDamage(int damage)
+    public void GetDamage(double damage)
     {
-        CurrentHealth -= damage * Genes.ArmorPercent; // formula
+        double effectiveArmor = Math.Min(Genes.ArmorPercent, 0.9);
+    
+        CurrentHealth -= damage * (1.0 - effectiveArmor);
+    
+        if (CurrentHealth <= 0) CurrentHealth = 0;
     }
-
+    
     public enum TargetCategory
     {
         Food,
@@ -127,7 +116,6 @@ public class Unit
                 return TargetCategory.Empty; 
         }
     }
-
     private Coordinates GetNextStepTo(Coordinates target)
     {
         int dx = Math.Sign(target.X - Coordinates.X);

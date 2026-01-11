@@ -6,7 +6,7 @@ public class FieldCell
 
     public Coordinates Coordinates { get; set; }
 
-    public double FoodAmount { get; set; }
+    public double FoodAmount { get; set; } = 0;
     public Unit? CurrentUnit { get; set; }
 
     public static FieldCell CreateWallCell(Coordinates coords)
@@ -29,11 +29,10 @@ public class FieldCell
     }
 
 
-private FieldCell(Coordinates coords, TypeOfFields type)
+    private FieldCell(Coordinates coords, TypeOfFields type)
     {
         Coordinates = coords;
         FieldType = type;
-        FoodAmount = 0;
         CurrentUnit = null;
     }
     private FieldCell(Coordinates coords, TypeOfFields type, double foodAmount)
