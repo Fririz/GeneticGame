@@ -1,6 +1,6 @@
 namespace GeneticGame;
 using GeneticGame.FieldEntities;
-
+using System.Text; 
 public class BoardUi
 {
     private readonly Engine _engine;
@@ -11,10 +11,13 @@ public class BoardUi
 
     public void StartGame()
     {
+        int counter = 0;
+        Console.CursorVisible = false;
         _engine.StartGame();
         ShowField(_engine.GetGameField());
         Thread.Sleep(1000);
-        int counter = 0;
+        Console.Clear();
+
         while (true)
         {
             if (counter % 50 == 0)
@@ -24,25 +27,43 @@ public class BoardUi
             _engine.UpdateGame();
             ShowField(_engine.GetGameField());
             Thread.Sleep(100);
-            Console.Clear();
+            Console.SetCursorPosition(0, 0);
             counter++;
         }
     }
     private void ShowField(Field field)
     {
+        Console.SetCursorPosition(0, 0);
+        var sb = new StringBuilder();
+
         for (int i = 0; i < field.Size; i++)
         {
             for (int j = 0; j < field.Size; j++)
             {
-                if(field.FieldCells[i,j].FieldType == TypeOfFields.Food) Console.Write("F");
-                if(field.FieldCells[i,j].FieldType == TypeOfFields.Wall) Console.Write("#");
-                if(field.FieldCells[i,j].FieldType == TypeOfFields.Empty) Console.Write(" ");
-                if (field.FieldCells[i, j].FieldType == TypeOfFields.Unit)
-                    Console.Write(field.FieldCells[i, j].CurrentUnit!.Name);
-                //if(field.FieldCells[i,j].FieldType == TypeOfFields.Unit) Console.Write(Random.Shared.NextDouble() > 0.5 ? "\U0001F434" : "🦄");
-                Console.Write(" ");
+                var cell = field.FieldCells[i, j];
+            
+                if (cell.FieldType == TypeOfFields.Food)
+                {
+                    sb.Append("🍎"); 
+                }
+                else if (cell.FieldType == TypeOfFields.Wall)
+                {
+                    sb.Append("██"); 
+                }
+                else if (cell.FieldType == TypeOfFields.Unit && cell.CurrentUnit != null)
+                {
+                    if (cell.CurrentUnit.Gender == 0)
+                        sb.Append("🧑"); 
+                    else
+                        sb.Append("👩"); 
+                }
+                else 
+                {
+                    sb.Append("  "); 
+                }
             }
-            Console.Write("\n");
+            sb.AppendLine();
         }
+        Console.Write(sb.ToString());
     }
 }
