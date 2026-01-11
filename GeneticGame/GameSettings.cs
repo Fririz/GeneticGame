@@ -12,7 +12,10 @@ public static class GameSettings
     //units
     public static readonly int InitialAmountOfUnit = 10;
     public static readonly double PercentOfInitGeneticsRandomization = 0.1;
-
+    //Birth
+    public static readonly int BaseBirthCooldown = 15;
+    public static readonly int BirthCooldownAfterBirth = 20;
+    
     public static double GetPercentOfInitGeneticsRandomization()
     {
         return Random.Shared.NextDouble() > 0.5 ? 1.3 : 0.6;

@@ -12,7 +12,7 @@ public class Unit
     public double CurrentEnergy { get; set; }
     public bool IsDead => CurrentHealth <= 0;
 
-    private int _birthCooldown = 5;
+    private int _birthCooldown = GameSettings.BaseBirthCooldown;
     
     public int BirthCooldown
     {

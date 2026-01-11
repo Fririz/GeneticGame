@@ -25,6 +25,8 @@ public class Engine
             if (unit.CurrentEnergy <= 0)
             {
                 RemoveUnitFromField(unit);
+                unit.GetDamage(unit.CurrentHealth + 100); 
+    
                 continue;
             }
             
@@ -94,8 +96,8 @@ public class Engine
         _gameField.FieldCells[emptyCell.Coordinates.X, emptyCell.Coordinates.Y].FieldType = TypeOfFields.Unit;
         
         _unitIdCounter++;
-        mother.BirthCooldown = 10;
-        father.BirthCooldown = 10;
+        mother.BirthCooldown = GameSettings.BirthCooldownAfterBirth;
+        father.BirthCooldown = GameSettings.BirthCooldownAfterBirth;
     }
     
     private void EatFood(Unit unit, FieldCell foodCell)
@@ -208,6 +210,10 @@ public class Engine
     public Field GetGameField()
     {
         return _gameField;
+    }
+    public List<Unit> GetAllUnits()
+    {
+        return _gameUnits; 
     }
     
     public void GenerateFood()
